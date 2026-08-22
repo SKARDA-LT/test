@@ -1,5 +1,6 @@
 from pathlib import Path
 import sys
+# v7: manual ElevenReader Copy triggers clipboard capture; normal Gmail selection remains unchanged.
 root=Path(sys.argv[1] if len(sys.argv)>1 else '.')
 p=root/'app/src/main/java/lt/skarda/dualtranslate/SelectionTranslateService.java'
 s=p.read_text()
