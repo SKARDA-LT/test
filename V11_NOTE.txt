@@ -1,0 +1,1 @@
+Dual Translate v11: automatic ElevenReader Copy attempts never translate stale clipboard content. Translation starts only after a real clipboard-change event.
