@@ -31,10 +31,8 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Reconstruct and unpack v2 project
+      - name: Unpack v2 project
         run: |
-          cat v2chunks/chunk* > DualTranslate_v2_project.b64
-          base64 -d DualTranslate_v2_project.b64 > DualTranslate_v2_project.zip
           rm -rf buildsrc
           mkdir buildsrc
           unzip -q DualTranslate_v2_project.zip -d buildsrc
