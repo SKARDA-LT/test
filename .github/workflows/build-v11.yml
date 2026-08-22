@@ -1,0 +1,47 @@
+name: Build Dual Translate v11 APK
+
+on:
+  push:
+    branches: [ dual-translate-v11-build ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android 35 platform
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Reconstruct v6 and patch to v11
+        run: |
+          cat v6small/chunk* > DualTranslate_v6_project.b64
+          base64 -d DualTranslate_v6_project.b64 > DualTranslate_v6_project.zip
+          rm -rf buildsrc
+          mkdir buildsrc
+          unzip -q DualTranslate_v6_project.zip -d buildsrc
+          python3 patch_v7.py buildsrc
+          python3 patch_v8.py buildsrc
+          python3 patch_v9.py buildsrc
+          python3 patch_v10.py buildsrc
+          python3 patch_v11.py buildsrc
+      - name: Build debug APK
+        working-directory: buildsrc
+        run: gradle :app:assembleDebug --stacktrace
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DualTranslate-v11-apk
+          path: buildsrc/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
