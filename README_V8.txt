@@ -1,0 +1,1 @@
+Dual Translate v8: ElevenReader manual Copy trigger keeps ElevenReader on screen and shows translation only as an accessibility overlay.
