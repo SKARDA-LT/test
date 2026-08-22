@@ -50,3 +50,5 @@ jobs:
           name: DualTranslate-v15-apk
           path: buildsrc/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+# v15 exact-selection build trigger
