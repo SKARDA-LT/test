@@ -1,12 +1,12 @@
-# Dual Translate for ElevenReader
+# Dual Translate v4
 
-Android app prototype that watches text selection events only from ElevenReader (`io.elevenlabs.readerapp`) using an Accessibility Service.
+Android test app for automatic EN -> Lithuanian + Russian translation.
 
-Behavior:
-- select English text in ElevenReader;
-- after ~650 ms the complete selected phrase is translated;
-- both Lithuanian and Russian results are shown together in an accessibility overlay;
-- no clipboard monitoring is used;
-- the Google Cloud Translation API key is entered locally in the installed app and is not stored in this repository.
+v4 safety changes:
+- only one accessibility service should be enabled;
+- editable text fields are ignored;
+- generic Share/More automation is removed;
+- ElevenReader uses a dedicated Copy + Select all + Add pronunciation toolbar detector;
+- the Google Cloud Translation API key stays local in the installed app.
 
 The build workflow creates a debug APK artifact for testing on Android.
