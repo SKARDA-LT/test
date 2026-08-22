@@ -2,22 +2,17 @@ from pathlib import Path
 import sys
 root=Path(sys.argv[1] if len(sys.argv)>1 else '.')
 
-# v9 fixes v8 timing: schedule the translation on the AccessibilityService handler,
-# which survives after the temporary clipboard-capture activity closes.
+# v9 fixes v8 timing. v8 queued the translation on ClipboardCaptureActivity's
+# own Handler after calling finish(), but onDestroy() removes that Handler's
+# callbacks. Use a separate main-looper Handler for the delayed translation.
 svc=root/'app/src/main/java/lt/skarda/dualtranslate/SelectionTranslateService.java'
-s=svc.read_text()
-anchor='    public static void submitExternalSelection('
-if anchor not in s:
-    raise RuntimeError('submitExternalSelection anchor not found')
-helper='''    public static void submitExternalSelectionAfterDelay(final String text, final String source, long delayMs) {\n        final SelectionTranslateService service = INSTANCE;\n        if (service == null || text == null || text.trim().isEmpty()) return;\n        service.handler.postDelayed(() -> submitExternalSelection(text, source), Math.max(0L, delayMs));\n    }\n\n'''
-s=s.replace(anchor, helper+anchor, 1)
-s=s.replace('v8 service connected. Gmail uses normal Android selection. In ElevenReader: select text, tap Copy, stay in ElevenReader, then LT + RU appears as an overlay.', 'v9 service connected. Gmail uses normal Android selection. In ElevenReader: select text, tap Copy, stay in ElevenReader, then LT + RU appears as an overlay.')
+s=svc.read_text().replace('v8 service connected. Gmail uses normal Android selection. In ElevenReader: select text, tap Copy, stay in ElevenReader, then LT + RU appears as an overlay.', 'v9 service connected. Gmail uses normal Android selection. In ElevenReader: select text, tap Copy, stay in ElevenReader, then LT + RU appears as an overlay.')
 svc.write_text(s)
 
 cap=root/'app/src/main/java/lt/skarda/dualtranslate/ClipboardCaptureActivity.java'
 s=cap.read_text()
 old='''final String captured = text;\n                    finishWithoutAnimation();\n                    handler.postDelayed(() -> SelectionTranslateService.submitExternalSelection(captured, "ElevenReader manual Copy trigger"), 180);\n                    return;'''
-new='''final String captured = text;\n                    SelectionTranslateService.submitExternalSelectionAfterDelay(captured, "ElevenReader manual Copy trigger", 220);\n                    finishWithoutAnimation();\n                    return;'''
+new='''final String captured = text;\n                    new Handler(Looper.getMainLooper()).postDelayed(() ->\n                            SelectionTranslateService.submitExternalSelection(captured, "ElevenReader manual Copy trigger"), 220);\n                    finishWithoutAnimation();\n                    return;'''
 if old not in s:
     raise RuntimeError('v8 delayed clipboard block not found')
 s=s.replace(old,new,1)
