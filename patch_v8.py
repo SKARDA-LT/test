@@ -10,8 +10,8 @@ p.write_text(s)
 
 m=root/'app/src/main/AndroidManifest.xml'
 s=m.read_text()
-# Add isolated task affinity and no history to ClipboardCaptureActivity if not already there.
-s=s.replace('android:name=".ClipboardCaptureActivity"\n            android:exported="false"', 'android:name=".ClipboardCaptureActivity"\n            android:exported="false"\n            android:taskAffinity=""\n            android:noHistory="true"')
+# Keep the existing noHistory setting; only isolate ClipboardCaptureActivity from the main app task.
+s=s.replace('android:name=".ClipboardCaptureActivity"\n            android:exported="false"', 'android:name=".ClipboardCaptureActivity"\n            android:exported="false"\n            android:taskAffinity=""')
 m.write_text(s)
 
 # Ensure service launches capture as a separate ephemeral task.
