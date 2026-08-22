@@ -40,6 +40,7 @@ jobs:
           python3 patch_v11.py buildsrc
           python3 patch_v12.py buildsrc
           python3 patch_v13.py buildsrc
+          printf '\nandroid.useAndroidX=true\n' >> buildsrc/gradle.properties
       - name: Build debug APK
         working-directory: buildsrc
         run: gradle :app:assembleDebug --stacktrace
