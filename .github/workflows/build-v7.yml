@@ -3,6 +3,8 @@ name: Build Dual Translate v7 APK
 on:
   push:
     branches: [ dual-translate-v7-build ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
