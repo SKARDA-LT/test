@@ -31,13 +31,15 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Reconstruct v4 project
+      - name: Reconstruct v2 and patch to v4
         run: |
-          cat v4chunks/chunk* > DualTranslate_v4_project.b64
-          base64 -d DualTranslate_v4_project.b64 > DualTranslate_v4_project.zip
+          cat v2cchunks/chunk* > DualTranslate_v2_project.b64
+          base64 -d DualTranslate_v2_project.b64 > DualTranslate_v2_project.zip
           rm -rf buildsrc
           mkdir buildsrc
-          unzip -q DualTranslate_v4_project.zip -d buildsrc
+          unzip -q DualTranslate_v2_project.zip -d buildsrc
+          python3 patch_v3.py buildsrc
+          python3 patch_v4.py buildsrc
 
       - name: Build debug APK
         working-directory: buildsrc
