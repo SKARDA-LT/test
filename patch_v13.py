@@ -298,6 +298,12 @@ if 'com.google.mlkit:text-recognition' not in t:
     t += "\n\ndependencies {\n    implementation 'com.google.mlkit:text-recognition:16.0.1'\n}\n"
 b.write_text(t)
 
+# ML Kit depends on AndroidX; enable it inside the reconstructed project itself.
+gp=root/'gradle.properties'
+gpt=gp.read_text() if gp.exists() else ''
+if 'android.useAndroidX=true' not in gpt:
+    gp.write_text(gpt.rstrip() + '\nandroid.useAndroidX=true\n')
+
 # AccessibilityService.takeScreenshot requires this declared capability.
 xml=root/'app/src/main/res/xml/accessibility_service_config.xml'
 x=xml.read_text()
