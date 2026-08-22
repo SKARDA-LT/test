@@ -1,8 +1,8 @@
-name: Build Dual Translate v12 APK
+name: Build Dual Translate v13 APK
 
 on:
   push:
-    branches: [ dual-translate-v12-build ]
+    branches: [ dual-translate-v13-build ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Reconstruct v6 and patch to v12
+      - name: Reconstruct v6 and patch to v13
         run: |
           cat v6small/chunk* > DualTranslate_v6_project.b64
           base64 -d DualTranslate_v6_project.b64 > DualTranslate_v6_project.zip
@@ -39,12 +39,13 @@ jobs:
           python3 patch_v10.py buildsrc
           python3 patch_v11.py buildsrc
           python3 patch_v12.py buildsrc
+          python3 patch_v13.py buildsrc
       - name: Build debug APK
         working-directory: buildsrc
         run: gradle :app:assembleDebug --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: DualTranslate-v12-apk
+          name: DualTranslate-v13-apk
           path: buildsrc/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
