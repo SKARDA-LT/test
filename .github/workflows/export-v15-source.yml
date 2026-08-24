@@ -1,0 +1,37 @@
+name: Export Dual Translate v15 Source
+
+on:
+  push:
+    branches: [ dual-translate-v15-build ]
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Reconstruct v15 source
+        run: |
+          cat v6small/chunk* > DualTranslate_v6_project.b64
+          base64 -d DualTranslate_v6_project.b64 > DualTranslate_v6_project.zip
+          rm -rf buildsrc
+          mkdir buildsrc
+          unzip -q DualTranslate_v6_project.zip -d buildsrc
+          python3 patch_v7.py buildsrc
+          python3 patch_v8.py buildsrc
+          python3 patch_v9.py buildsrc
+          python3 patch_v10.py buildsrc
+          python3 patch_v11.py buildsrc
+          python3 patch_v12.py buildsrc
+          python3 patch_v13.py buildsrc
+          python3 patch_v14.py buildsrc
+          python3 patch_v15.py buildsrc
+          printf '\nandroid.useAndroidX=true\n' >> buildsrc/gradle.properties
+          zip -qr DualTranslate-v15-source.zip buildsrc
+      - name: Upload source
+        uses: actions/upload-artifact@v4
+        with:
+          name: DualTranslate-v15-source
+          path: DualTranslate-v15-source.zip
+          if-no-files-found: error
