@@ -3,6 +3,8 @@ name: Export Dual Translate v15 Source
 on:
   push:
     branches: [ dual-translate-v15-build ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
