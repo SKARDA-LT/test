@@ -46,9 +46,17 @@ jobs:
       - name: Build debug APK
         working-directory: buildsrc
         run: gradle :app:assembleDebug --stacktrace
+      - name: Package reconstructed source
+        run: zip -qr DualTranslate-v15-source.zip buildsrc
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: DualTranslate-v15-apk
           path: buildsrc/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Upload reconstructed source
+        uses: actions/upload-artifact@v4
+        with:
+          name: DualTranslate-v15-source
+          path: DualTranslate-v15-source.zip
           if-no-files-found: error
